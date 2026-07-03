@@ -7,64 +7,38 @@
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+   <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <div id="root"></div>
-  <script>
-    // Fetch the JSX file and transpile it
-    fetch('https://raw.githubusercontent.com/llucop/Inventario-Labs-y-Clinicas/main/inventario_mockup.jsx')
-      .then(response => response.text())
-      .then(jsxCode => {
-        // Replace module imports with global variables
-        const transformedCode = jsxCode
-          .replace(/import React, { useState } from ["']react["'];/, 'const { useState } = React;')
-          .replace(/import\s*{[^}]+}\s*from\s*["']lucide-react["'];/, '// Icons loaded from CDN')
-          .replace(/export default function/, 'function')
-          .replace(/(icon:\s*)(\w+)/g, 'icon: "$2"'); // Convert icon references to strings
-        
-        // Add code to create Lucide icons dynamically
-        const finalCode = `
-          ${transformedCode}
-          
-          // Mount the app
-          const root = ReactDOM.createRoot(document.getElementById('root'));
-          root.render(React.createElement(InventarioMockup));
-        `;
-        
-        // Transpile and execute
-        try {
-          const transpiledCode = Babel.transform(finalCode, {
-            presets: ['react']
-          }).code;
-          
-          eval(transpiledCode);
-        } catch (error) {
-          console.error('Error loading app:', error);
-          document.getElementById('root').innerHTML = `
-            <div style="padding: 40px; text-align: center; font-family: 'Segoe UI', Arial, sans-serif;">
-              <h1 style="color: #D13438;">Error al cargar la aplicación</h1>
-              <p style="color: #605E5C;">${error.message}</p>
-              <p style="color: #605E5C; margin-top: 20px;">
-                <a href="https://github.com/llucop/Inventario-Labs-y-Clinicas" style="color: #0078D4;">Ver repositorio</a>
-              </p>
-            </div>
-          `;
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching JSX:', error);
-        document.getElementById('root').innerHTML = `
-          <div style="padding: 40px; text-align: center; font-family: 'Segoe UI', Arial, sans-serif;">
-            <h1 style="color: #D13438;">Error al cargar el archivo</h1>
-            <p style="color: #605E5C;">${error.message}</p>
-            <p style="color: #605E5C; margin-top: 20px;">
-              <a href="https://github.com/llucop/Inventario-Labs-y-Clinicas" style="color: #0078D4;">Ver repositorio</a>
-            </p>
-          </div>
-        `;
-      });
-  </script>
+  <script type="text/babel" data-type="module">
+    const { useState } = React;
+
+
+ const {
+  Home, ScanLine, ClipboardList, LayoutGrid, Search, ChevronLeft,
+  AlertTriangle, ArrowDownCircle, ArrowUpCircle, CheckCircle2,
+  MapPin, FlaskConical, Syringe, Package, Droplet, X, QrCode, User,
+  PackagePlus, ChevronDown, RotateCw, MoreHorizontal
+ } = lucide;
+// Load and execute the JSX component
+ fetch('https://raw.githubusercontent.com/llucop/Inventario-Labs-y-Clinicas/main/inventario_mockup.jsx')
+  .then(response => response.text())
+  .then(jsxCode => {
+    // Remove import statements and replace with global variables
+    const transformedCode = jsxCode
+      .replace(/import React, \{ useState \} from ["']react["'];?/g, '')
+      .replace(/import \{[^}]+\} from ["']lucide-react["'];?/g, '')
+      .replace(/export default function/g, 'function');
+    
+    // Execute the transformed code
+    eval(Babel.transform(transformedCode, { presets: ['react'] }).code);
+    
+    // Render the app
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(InventarioMockup));
+  });
+ </script>
 </body>
 </html>
